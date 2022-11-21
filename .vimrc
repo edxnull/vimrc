@@ -51,17 +51,17 @@ hi Search ctermbg=LightGreen
 "https://devhints.io/vimscript
 
 "NOTE: This is an example func that does redirection to stdout
-fun! s:DumpToStdout()
+func! s:DumpToStdout()
     redi! > /dev/stdout
     for line in getline(1, '$')
         echo line
     endfor
     redi END
-endfun
+endfunc
 
 "!F=`find /usr/lib/go | fzf` && cat $F | vim -R -c 'set syntax=go' -
-fun! s:GoSrc()
-endfun
+func! s:GoSrc()
+endfunc
 
 " TODO: make VGrep understand <','>
 " quickfix: vimgrep /pattern/gj ./*.go | cw | resize 6
@@ -72,39 +72,39 @@ endfunc
 command! -nargs=* Vg :call s:VGrep(<f-args>)
 
 ":tabnew | set syntax=go | read !go doc -src -u -all filepath.join
-fun! s:GoDoc(lookup)
+func! s:GoDoc(lookup)
     silent exec ":tabnew|view" a:lookup "| set syntax=go | read !go doc -src -u -all" a:lookup
-endfun
+endfunc
 
 command! -nargs=1 Gdc call s:GoDoc(<q-args>)
 
-fun! s:GoDocSignature(lookup)
+func! s:GoDocSignature(lookup)
     silent exec ":tabnew|view" a:lookup "| set syntax=go | read !go doc " a:lookup
-endfun
+endfunc
 
 command! -nargs=1 Gdcs call s:GoDocSignature(<q-args>)
 
 "'<,'>w ! printf 'package main\n\nfunc main() {\n' && xargs -0 echo && printf '}'
-fun! s:Snippet() range
+func! s:Snippet() range
     let l:lines = getline(a:firstline, a:lastline)
     echo printf("package main\n\nfunc main() {\n")
     for line in l:lines
         echo line
     endfor
     echo printf("}")
-endfun
+endfunc
 
 command! -range Sn '<,'> call s:Snippet()
 
 ":silent'<,'>w !firefox https://play.golang.org/p/`curl --silent -X POST --data-binary  
 " @- https://play.golang.org/share`
-fun! s:UploadSnippetOnMacOS() range
+func! s:UploadSnippetOnMacOS() range
     "let l:line = join(getline(a:firstline, a:lastline))
     "exec l:line . 'write foo.go'
     let l:link = "https://play.golang.org"
     let l:curl = "curl --silent -X POST --data-binary @- "
     exec "'<,'>:w !open " . l:link . "/p/` " . l:curl . l:link . "/share`"
-endfun
+endfunc
 
 command! -range Pg '<,'>call s:UploadSnippetOnMacOS()
 "command! -range Pg silent'<,'>w !open
