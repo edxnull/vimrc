@@ -116,10 +116,6 @@ nnoremap <Leader>k :!go test<CR>
 "!grep -Hr --color
 "vim http://... will wget and open a webpage!!!!!!!!!
 "
-"A hacky way to print out PKG usage within /usr/lib/go @WIP!!! PROBABLY BUGGY!!!!
-" PKG="filepath"; for x in `go doc -short $PKG | cut -d "(" -f 1 | cut -d " " -f 2`; do echo $PKG.$x 
-" `grep -R "$PKG.$x" /usr/lib/go/src | wc -l`; done
-"
 "We can use this in GOLANG codebase to open up any filepath:linenr
 "use head or tail or nothing if you want ot get all of the occurrence
 "vim `grep --color -n -R "TODO" . | cut -d  ":" -f -2 | sed 's/:/ +/' | head -1`
