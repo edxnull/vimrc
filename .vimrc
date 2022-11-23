@@ -48,8 +48,6 @@ call plug#end()
 colorscheme xcodelighthc
 hi Search ctermbg=LightGreen
 
-"https://devhints.io/vimscript
-
 "NOTE: This is an example func that does redirection to stdout
 func! s:DumpToStdout()
     redi! > /dev/stdout
