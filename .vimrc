@@ -119,11 +119,27 @@ nnoremap <Leader>k :!go test<CR>
 "vim `grep --color -n -R "TODO" . | cut -d  ":" -f -2 | sed 's/:/ +/' | head -1`
 "vim $(grep -n -e "func _assert" *.go | awk '{ print $1 }' | cut -d ':' -f 1,2 |sed 's/:/ +/')
 "
+" So we made some progress! now we just need to figure out how to parse a
+" bash output into this output...
+"vim -c ":e /opt/homebrew/Cellar/go/1.19.2/libexec/src/cmd/go/internal/modload/mvs.go|:121|
+"        :tabe /opt/homebrew/Cellar/go/1.19.2/libexec/src/cmd/go/internal/get/get.go|:262"
+" NOTE: we can go to a file:linenr by using Control-w-shift-F
+"
+" grep -n -R "context.TODO" /opt/homebrew/Cellar/go/1.19.2/libexec/src |
+" cut -d  ":" -f -2 | sed 's/:/|:/ ; 2,$s/^/|/'
+"
+" |:set splitbelow| split
+"
+" full working command: this splits the output into tabe views
+" vim -c "`grep -n -R "context.TODO" /opt/homebrew/Cellar/go/1.19.2/libexec/src |
+" cut -d  ":" -f -2 | sed 's/:/|:/ ; 1s/^/:edit / ; 2,$s/^/|:tabe /' | xargs | sed 's/ |/| /g'`"
+"
 "This is how we can generate unique md5 filepaths and sort them by TODO
 "occurrence! NOTE: This is a bit slow, so maybe there is a better way to do this?
 "for file in `grep --color -n -R "TODO" /usr/lib/go/src/ | cut -d  ":" -f -2 | sed 's/:[0-9]\+/ /'`; 
 "do echo $(md5sum < $file) $file; done > md5todo; cat md5todo | uniq -c | sort -k1n
 "
+"https://github.com/compiler-explorer/compiler-explorer/blob/3f36aa96cb62c1ccde60e07f4ee048b3e0f48857/docs/API.md
 "!!! TODO: ADD GODBOLT.ORG support! same as for https://play.golang.org/...
 "
 "HOW TO delete and replace or minify characters in shell???? Use tr!
