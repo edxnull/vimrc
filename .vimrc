@@ -109,6 +109,9 @@ command! -range Pg '<,'>call s:UploadSnippetOnMacOS()
             "\ https://play.golang.org/p/`curl --silent -X POST
             "\  --data-binary  @- https://play.golang.org/share`
 
+":command -nargs=1 -complete=file -bar Ref :rightbelow :split <args> | :wincmd k
+":command -nargs=1 -complete=file -bar Vref :rightbelow :vsplit <args> | :wincmd l
+
 nnoremap <Leader>k :!go test<CR>
 
 "!grep -Hr --color
