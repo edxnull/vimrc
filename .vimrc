@@ -94,11 +94,6 @@ endfunc
 
 command! -range Sn '<,'> call s:Snippet()
 
-":silent'<,'>w !firefox https://play.golang.org/p/`curl --silent -X POST --data-binary  
-"let l:curl = "curl --silent -X POST --data-binary @- "
-" @- https://play.golang.org/share`
-" https://vi.stackexchange.com/questions/5205/how-to-grep-in-ex-command-output
-" https://stackoverflow.com/questions/34847981/curl-with-multiline-of-json
 func! s:UploadSnippetOnMacOS() range
     let l:snip = ""
     redi! => l:snip
