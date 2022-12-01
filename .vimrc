@@ -95,13 +95,18 @@ endfunc
 command! -range Sn '<,'> call s:Snippet()
 
 ":silent'<,'>w !firefox https://play.golang.org/p/`curl --silent -X POST --data-binary  
+"let l:curl = "curl --silent -X POST --data-binary @- "
 " @- https://play.golang.org/share`
+" https://vi.stackexchange.com/questions/5205/how-to-grep-in-ex-command-output
+" https://stackoverflow.com/questions/34847981/curl-with-multiline-of-json
 func! s:UploadSnippetOnMacOS() range
-    "let l:line = join(getline(a:firstline, a:lastline))
-    "exec l:line . 'write foo.go'
+    let l:snip = ""
+    redi! => l:snip
+        sil exec "'<,'>:call s:Snippet()"
+    redi END
     let l:link = "https://play.golang.org"
-    let l:curl = "curl --silent -X POST --data-binary @- "
-    exec "'<,'>:w !open " . l:link . "/p/` " . l:curl . l:link . "/share`"
+    let l:curl = system("curl --silent -d " . "'" . join(split(l:snip, "\\'") , "") . "'" . " https://play.golang.org/share")
+    exec "'<,'>:w !open " . l:link . "/p/" . l:curl
 endfunc
 
 command! -range Pg '<,'>call s:UploadSnippetOnMacOS()
