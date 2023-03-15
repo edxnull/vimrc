@@ -5,7 +5,6 @@ syntax on
 filetype plugin indent on
 
 set t_Co=256
-set termguicolors
 set nu
 set shortmess-=S
 set nowrap
@@ -114,6 +113,11 @@ command! -range Pg '<,'>call s:UploadSnippetOnMacOS()
 
 nnoremap <Leader>k :!go test<CR>
 
+" :copen | set ma | silent r !go run main.go
+" This opens a new quickfix window and pates any errors
+" we can navigate quickfix window by using gF and CTRL-O or
+" alternatively CTRL-W gf to open a new tab (or even :e#)
+
 "!grep -Hr --color
 "vim http://... will wget and open a webpage!!!!!!!!!
 "
@@ -124,6 +128,7 @@ nnoremap <Leader>k :!go test<CR>
 "
 " So we made some progress! now we just need to figure out how to parse a
 " bash output into this output...
+"
 "vim -c ":e /opt/homebrew/Cellar/go/1.19.2/libexec/src/cmd/go/internal/modload/mvs.go|:121|
 "        :tabe /opt/homebrew/Cellar/go/1.19.2/libexec/src/cmd/go/internal/get/get.go|:262"
 " NOTE: we can go to a file:linenr by using Control-w-shift-F
@@ -163,7 +168,6 @@ nnoremap <Leader>k :!go test<CR>
 " It's easier for testing things and running small scripts than exiting
 " your current environment, jumping to another folder and so on...
 
-" We need this snippet for lets-go.pdf tutorials
 iabbrev http@ func _N(w http.ResponseWriter, r *http.Request) {<CR>}<ESC>kw
 iabbrev fori@ for i := 0; i < _N; i++ {<CR>}<ESC>kf_
 iabbrev forx@ for _N := range _N {<CR>}<ESC>kf_
