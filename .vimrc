@@ -75,11 +75,17 @@ endfunc
 
 command! -nargs=1 Gdc call s:GoDoc(<q-args>)
 
-func! s:GoDocSignature(lookup)
+func! s:GoDocShort(lookup)
+    silent exec ":tabnew|view" a:lookup "| set syntax=go | read !go doc -short" a:lookup
+endfunc
+
+command! -nargs=1 Gdsh call s:GoDocShort(<q-args>)
+
+func! s:GoDocSignatureDescription(lookup)
     silent exec ":tabnew|view" a:lookup "| set syntax=go | read !go doc " a:lookup
 endfunc
 
-command! -nargs=1 Gdcs call s:GoDocSignature(<q-args>)
+command! -nargs=1 Gdsc call s:GoDocSignature(<q-args>)
 
 "'<,'>w ! printf 'package main\n\nfunc main() {\n' && xargs -0 echo && printf '}'
 func! s:Snippet() range
