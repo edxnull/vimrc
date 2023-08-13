@@ -174,9 +174,10 @@ nnoremap <Leader>k :!go test<CR>
 " It's easier for testing things and running small scripts than exiting
 " your current environment, jumping to another folder and so on...
 
-iabbrev http@ func _N(w http.ResponseWriter, r *http.Request) {<CR>}<ESC>kw
-iabbrev fori@ for i := 0; i < _N; i++ {<CR>}<ESC>kf_
-iabbrev forx@ for _N := range _N {<CR>}<ESC>kf_
-iabbrev go@ go func(){<CR>}()<ESC>k
-iabbrev iferr@ if err != nil {<CR>}<ESC>k
+iabbrev http_ func _N(w http.ResponseWriter, r *http.Request) {<CR>}<ESC>kw<S-*>
+iabbrev fori_ for i := 0; i < _N; i++ {<CR>}<ESC>kf_
+iabbrev forx_ for _N := range _N {<CR>}<ESC>kf_
+iabbrev go_ go func(){<CR>}()<ESC>k
+iabbrev ifer_ if err != nil {<CR>}<ESC>k
+iabbrev iferf_ if err != nil {<CR>Fatalf()<CR>}<ESC>k
 iabbrev gomain_ package main<CR><CR>func main() {<CR>}<ESC>
