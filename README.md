@@ -1,5 +1,5 @@
 # vimrc
 my .vimrc config
 
-useful links:
+useful urls:
 - https://devhints.io/vimscript
