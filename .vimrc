@@ -43,6 +43,7 @@ call plug#begin()
 Plug 'arzg/vim-colors-xcode'
 Plug 'mattn/emmet-vim'
 Plug 'mattn/vim-goimports'
+Plug 'ctrlpvim/ctrlp.vim'
 call plug#end()
 colorscheme xcodelighthc
 hi Search ctermbg=LightGreen
