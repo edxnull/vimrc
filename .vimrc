@@ -175,10 +175,13 @@ nnoremap <Leader>k :!go test<CR>
 " It's easier for testing things and running small scripts than exiting
 " your current environment, jumping to another folder and so on...
 
-iabbrev http_ func _N(w http.ResponseWriter, r *http.Request) {<CR>}<ESC>kw<S-*>
-iabbrev fori_ for i := 0; i < _N; i++ {<CR>}<ESC>kf_
-iabbrev forx_ for _N := range _N {<CR>}<ESC>kf_
-iabbrev go_ go func(){<CR>}()<ESC>k
-iabbrev ifer_ if err != nil {<CR>}<ESC>k
-iabbrev iferf_ if err != nil {<CR>Fatalf()<CR>}<ESC>k
-iabbrev gomain_ package main<CR><CR>func main() {<CR>}<ESC>
+augroup gocmds
+    autocmd!
+    autocmd FileType go :iabbrev http_ func _N(w http.ResponseWriter, r *http.Request) {<CR>}<ESC>kw<S-*>
+    autocmd FileType go :iabbrev fori_ for i := 0; i < _N; i++ {<CR>}<ESC>kf_
+    autocmd FileType go :iabbrev forx_ for _N := range _N {<CR>}<ESC>kf_
+    autocmd FileType go :iabbrev go_ go func(){<CR>}()<ESC>k
+    autocmd FileType go :iabbrev ifer_ if err != nil {<CR>}<ESC>k
+    autocmd FileType go :iabbrev iferf_ if err != nil {<CR>Fatalf()<CR>}<ESC>k
+    autocmd FileType go :iabbrev gomain_ package main<CR><CR>func main() {<CR>}<ESC>
+augroup END
