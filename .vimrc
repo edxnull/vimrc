@@ -4,6 +4,8 @@ set background=light
 syntax on
 filetype plugin indent on
 
+let loaded_matchparen = 1
+
 set t_Co=256
 set nu
 set shortmess-=S
@@ -12,6 +14,7 @@ set tabstop=4
 set shiftwidth=4
 set expandtab
 set smarttab
+set nosm
 set showcmd
 set smartindent
 set autoindent
