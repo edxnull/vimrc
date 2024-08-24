@@ -83,13 +83,39 @@ func! s:GoDocShort(lookup)
     silent exec ":tabnew|view" a:lookup "| set syntax=go | read !go doc -short" a:lookup
 endfunc
 
-command! -nargs=1 Gdsh call s:GoDocShort(<q-args>)
+"command! -nargs=1 Gdsh call s:GoDocShort(<q-args>)
 
 func! s:GoDocSignatureDescription(lookup)
     silent exec ":tabnew|view" a:lookup "| set syntax=go | read !go doc " a:lookup
 endfunc
 
-command! -nargs=1 Gdsc call s:GoDocSignatureDescription(<q-args>)
+"command! -nargs=1 Gdsc call s:GoDocSignatureDescription(<q-args>)
+"command! -nargs=1 Gdsh call popup_create(systemlist('go doc -src -u -all ' . <q-args>), #{title: 'Go Doc: ' . <q-args>, highlight: 'Normal', minwidth: 80, minheight: 20, maxwidth: &columns - 4, maxheight: &lines - 4, border: [], padding: [1,1,1,1], close: 'button', filter: 'popup_filter_menu'}) | call win_execute(popup_findinfo(), 'set syntax=go')
+"command! -nargs=1 Gdsh call popup_create(systemlist('go doc -src -u -all ' . <q-args>), #{title: 'Go Doc: ' . <q-args>, highlight: 'Normal', minwidth: 80, minheight: 20, maxwidth: &columns - 4, maxheight: &lines - 4, border: [0,0,0,0], padding: [0,0,0,0], close: 'button', filter: 'popup_filter_menu'}) | call win_execute(popup_findinfo(), 'set syntax=go')
+"command! -nargs=1 Gdsh let content = systemlist('go doc -src -u -all ' . <q-args>) | call append(search('^func', 'bnW') - 1, content) | call append(search('^func', 'bnW') - 1, '// ' . <q-args> . ' Documentation:') | call append(search('^func', 'bnW') - 1, '')
+"command! -nargs=1 Gdsh let content = systemlist('go doc -src -u -all ' . <q-args>) | let commented = map(content, '"// " . v:val') | call append(search('^func', 'bnW') - 1, commented) | call append(search('^func', 'bnW') - 1, '// ' . <q-args> . ' Documentation:') | call append(search('^func', 'bnW') - 1, '//') | call append(search('^func', 'bnW') - 1, '//')
+"command! -nargs=1 Gdsh let content = systemlist('go doc -src -u -all ' . <q-args>) | call append(line('.'), map(content, '"// " . v:val'))
+"command! -nargs=1 Gdsh let content = systemlist('go doc -src -u -all ' . <q-args>) | let insert_line = search('^$', 'bnW') | if insert_line == 0 | let insert_line = line('.') - 1 | endif | call append(insert_line, ['// ' . <q-args> . ' Documentation:', '//'] + map(content, '"// " . v:val') + ['//']) | call cursor(insert_line + 1, 1)
+"command! Gdsh let word = expand('<cword>') | let content = systemlist('go doc -src -u -all ' . word) | let insert_line = search('^import', 'bnW') | if insert_line == 0 | let insert_line = 1 | endif | call append(insert_line, ['', '// ' . word . ' Documentation:', '//'] + map(content, '"// " . v:val') + ['//']) | call cursor(insert_line + 2, 1)
+"command! Gdsh let fullword = expand('<cWORD>') | let parts = split(fullword, '\.') | let docarg = len(parts) > 1 ? join(parts[-2:], '.') : fullword | let content = systemlist('go doc -src -u -all ' . docarg) | let insert_line = search('^import', 'bnW') | if insert_line == 0 | let insert_line = 1 | endif | call append(insert_line, ['', '// ' . docarg . ' Documentation:', '//'] + map(content, '"// " . v:val') + ['//']) | call cursor(insert_line + 2, 1)
+"command! Gdsh let fullword = expand('<cWORD>') | let parts = split(matchstr(fullword, '\v\w+\.\w+'), '\.') | let docarg = join(parts, '.') | let content = systemlist('go doc -src -u -all ' . docarg) | let insert_line = search('^import', 'bnW') | if insert_line == 0 | let insert_line = 1 | endif | call append(insert_line, ['', '// ' . docarg . ' Documentation:', '//'] + map(content, '"// " . v:val') + ['//']) | call cursor(insert_line + 2, 1)
+command! Gdsh
+    \ let fullword = expand('<cWORD>') |
+    \ let parts = split(matchstr(fullword, '\v\w+\.\w+'), '\.') |
+    \ let docarg = join(parts, '.') |
+    \ let content = systemlist('go doc -short ' . docarg) |
+    \ let current_line = line('.') |
+    \ let insert_line = search('^$', 'bnW') |
+    \ if insert_line == 0 || insert_line < search('^import', 'bnW') |
+    \   let insert_line = search('^import', 'nW') |
+    \   if insert_line == 0 |
+    \     let insert_line = 1 |
+    \   else |
+    \     let insert_line = prevnonblank(insert_line - 1) |
+    \   endif |
+    \ endif |
+    \ call append(insert_line, [''] + map(content, '"// " . v:val') + ['//']) |
+    \ call cursor(insert_line + 2, 1)
 
 "'<,'>w ! printf 'package main\n\nfunc main() {\n' && xargs -0 echo && printf '}'
 func! s:Snippet() range
