@@ -250,7 +250,7 @@ function! GoDocPopupFilter(winid, key)
         else
             call win_execute(a:winid, 'normal! k')
         endif
-    elseif char2nr(a:key) == 71
+    elseif char2nr(a:key) == 71 "capital G
         let s:current_index = total_items - 1
         call win_execute(a:winid, 'normal! G')
     elseif a:key == 'g'
