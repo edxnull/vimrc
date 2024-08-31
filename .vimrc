@@ -263,7 +263,6 @@ function! GoDocPopupFilter(winid, key)
         endif
     endif
 
-    " Update the title after navigation
     call popup_setoptions(a:winid, {'title': printf('go doc -short %s (%d/%d)', s:current_pkg, s:current_index + 1, total_items)})
 
     return 1
@@ -276,9 +275,7 @@ function! GoDocPopupCallback(id, result)
 endfunction
 
 function! RemoveKeyword(str)
-  " First, remove leading spaces
   let trimmed_str = substitute(a:str, '^\s\+', '', '')
-
   let pattern = '\v^(func|type|const|var)\s+'
   if match(trimmed_str, pattern) != -1
     return substitute(trimmed_str, pattern, '', '')
@@ -288,10 +285,7 @@ function! RemoveKeyword(str)
 endfunction
 
 function! ExtractTypeName(str)
-  " Remove leading spaces and 'type' keyword
   let trimmed_str = substitute(a:str, '^\s*type\s\+', '', '')
-
-  " Extract the type name (everything up to the first space or '{')
   return matchstr(trimmed_str, '^[^ {]\+')
 endfunction
 
@@ -299,14 +293,12 @@ function! ShowDetail()
     if s:current_index >= 0 && s:current_index < len(s:menu_items)
         let selection = s:menu_items[s:current_index]
 
-        " Process the selection using cut commands
         let processed_selection = system(printf('echo "%s" | cut -d " " -f2- | cut -d"(" -f1', selection))
 
         let processed_selection = ExtractTypeName(RemoveKeyword(processed_selection))
 
         let processed_selection = substitute(processed_selection, '\n$', '', '')  " Remove trailing newline
 
-        " Now use the processed selection in the go doc command
         let cmd = printf('go doc -short %s.%s', s:current_pkg, processed_selection)
         let output = system(cmd)
         let detail_lines = split(output, '\n')
