@@ -200,7 +200,6 @@ nnoremap <Leader>k :!go test<CR>
 " [Quick Snippets]: cat main.go | tr '\n' '$' | sed 's/\$/\<CR>/g' 
 "
 
-
 let s:detail_winid = 0
 let s:main_winid = 0
 let s:current_pkg = ''
@@ -214,7 +213,7 @@ function! ShowGoDocPopup(pkg)
     let s:current_index = 0
 
     let options = {
-        \ 'title': 'go doc -short ' . a:pkg,
+        \ 'title': printf('go doc -short %s (%d/%d)', a:pkg, s:current_index + 1, len(s:menu_items)),
         \ 'padding': [1,1,1,1],
         \ 'border': [1,1,1,1],
         \ 'maxheight': 15,
@@ -222,29 +221,34 @@ function! ShowGoDocPopup(pkg)
         \ 'maxwidth': 80,
         \ 'cursorline': 1,
         \ 'wrap': 0,
+        \ 'filter': 'GoDocPopupFilter',
         \ 'callback': 'GoDocPopupCallback'
     \ }
 
-    let s:main_winid = popup_menu(s:menu_items, options)
+    let s:main_winid = popup_create(s:menu_items, options)
 
     call win_execute(s:main_winid, 'setlocal nowrap')
     call win_execute(s:main_winid, 'setlocal conceallevel=2')
     call win_execute(s:main_winid, 'setlocal concealcursor=n')
-
-    call popup_setoptions(s:main_winid, {
-        \ 'filter': 'GoDocPopupFilter',
-        \ })
+    call win_execute(s:main_winid, 'call cursor(1, 1)')
 endfunction
 
 function! GoDocPopupFilter(winid, key)
+    let total_items = len(s:menu_items)
     if a:key == 'j'
-        let s:current_index = (s:current_index + 1) % len(s:menu_items)
-        call popup_filter_menu(a:winid, a:key)
-        return 1
+        let s:current_index = (s:current_index + 1) % total_items
+        if s:current_index == 0
+            call win_execute(a:winid, 'normal! gg')
+        else
+            call win_execute(a:winid, 'normal! j')
+        endif
     elseif a:key == 'k'
-        let s:current_index = (s:current_index - 1 + len(s:menu_items)) % len(s:menu_items)
-        call popup_filter_menu(a:winid, a:key)
-        return 1
+        let s:current_index = (s:current_index - 1 + total_items) % total_items
+        if s:current_index == total_items - 1
+            call win_execute(a:winid, 'normal! G')
+        else
+            call win_execute(a:winid, 'normal! k')
+        endif
     elseif a:key == "\<CR>"
         call ShowDetail()
         return 1
@@ -258,12 +262,14 @@ function! GoDocPopupFilter(winid, key)
             return 0
         endif
     endif
-    return popup_filter_menu(a:winid, a:key)
-endfunction
 
+    " Update the title after navigation
+    call popup_setoptions(a:winid, {'title': printf('go doc -short %s (%d/%d)', s:current_pkg, s:current_index + 1, total_items)})
+
+    return 1
+endfunction
 function! GoDocPopupCallback(id, result)
     if a:result > 0
-        let s:current_index = a:result - 1
         call ShowDetail()
     endif
 endfunction
@@ -274,6 +280,7 @@ function! ShowDetail()
         echo "Current selection: " . selection
     endif
 endfunction
+
 command! -nargs=1 GoDocFmtPopup call ShowGoDocPopup(<f-args>)
 
 augroup gocmds
