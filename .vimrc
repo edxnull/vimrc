@@ -215,7 +215,6 @@ function! ShowGoDocPopup(pkg)
     let options = {
         \ 'title': printf('go doc -short %s (%d/%d)', a:pkg, s:current_index + 1, len(s:menu_items)),
         \ 'padding': [1,1,1,1],
-        \ 'border': [1,1,1,1],
         \ 'maxheight': 15,
         \ 'minwidth': 60,
         \ 'maxwidth': 80,
@@ -321,14 +320,13 @@ function! ShowDetail()
         else
             let detail_options = {
                 \ 'title': 'Details: ' . processed_selection,
-                \ 'line': main_pos.line + main_pos.height + 15,
+                \ 'line': main_pos.line + main_pos.height + 1,
                 \ 'col': main_pos.col,
                 \ 'zindex': 300,
                 \ 'minwidth': 60,
                 \ 'minheight': 10,
                 \ 'maxwidth': 80,
-                \ 'maxheight': 15,
-                \ 'border': [1,1,1,1],
+                \ 'maxheight': 10,
                 \ 'padding': [1,1,1,1],
                 \ 'wrap': 0,
                 \ }
