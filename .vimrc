@@ -214,6 +214,7 @@ function! ShowGoDocPopup(pkg)
 
     let options = {
         \ 'title': printf('go doc -short %s (%d/%d)', a:pkg, s:current_index + 1, len(s:menu_items)),
+        \ 'zindex': 300,
         \ 'padding': [1,1,1,1],
         \ 'maxheight': 15,
         \ 'minwidth': 60,
@@ -304,7 +305,6 @@ function! ShowDetail()
         let selection = s:menu_items[s:current_index]
 
         let processed_selection = system(printf('echo "%s" | cut -d " " -f2- | cut -d"(" -f1', selection))
-
         let processed_selection = ExtractTypeName(RemoveKeyword(processed_selection))
 
         let cmd = printf('go doc -short %s.%s', s:current_pkg, processed_selection)
