@@ -268,6 +268,7 @@ function! GoDocPopupFilter(winid, key)
 
     return 1
 endfunction
+
 function! GoDocPopupCallback(id, result)
     if a:result > 0
         call ShowDetail()
@@ -277,10 +278,38 @@ endfunction
 function! ShowDetail()
     if s:current_index >= 0 && s:current_index < len(s:menu_items)
         let selection = s:menu_items[s:current_index]
-        echo "Current selection: " . selection
+
+        " Process the selection using cut commands
+        let processed_selection = system(printf('echo "%s" | cut -d " " -f2- | cut -d"(" -f1', selection))
+        let processed_selection = substitute(processed_selection, '\n$', '', '')  " Remove trailing newline
+
+        " Now use the processed selection in the go doc command
+        let cmd = printf('go doc -short %s.%s', s:current_pkg, processed_selection)
+        let output = system(cmd)
+        let detail_lines = split(output, '\n')
+
+        let main_pos = popup_getpos(s:main_winid)
+
+        if s:detail_winid && popup_getpos(s:detail_winid) != {}
+            call popup_settext(s:detail_winid, detail_lines)
+        else
+            let detail_options = {
+                \ 'title': 'Details: ' . processed_selection,
+                \ 'line': main_pos.line + main_pos.height + 15,
+                \ 'col': main_pos.col,
+                \ 'zindex': 300,
+                \ 'minwidth': 60,
+                \ 'minheight': 10,
+                \ 'maxwidth': 80,
+                \ 'maxheight': 20,
+                \ 'border': [1,1,1,1],
+                \ 'padding': [1,1,1,1],
+                \ 'wrap': 0,
+                \ }
+            let s:detail_winid = popup_create(detail_lines, detail_options)
+        endif
     endif
 endfunction
-
 command! -nargs=1 GoDocFmtPopup call ShowGoDocPopup(<f-args>)
 
 augroup gocmds
