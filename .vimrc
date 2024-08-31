@@ -1,4 +1,5 @@
 set nocompatible
+"set termguicolors
 
 set background=light
 syntax on
@@ -90,15 +91,6 @@ func! s:GoDocSignatureDescription(lookup)
 endfunc
 
 "command! -nargs=1 Gdsc call s:GoDocSignatureDescription(<q-args>)
-"command! -nargs=1 Gdsh call popup_create(systemlist('go doc -src -u -all ' . <q-args>), #{title: 'Go Doc: ' . <q-args>, highlight: 'Normal', minwidth: 80, minheight: 20, maxwidth: &columns - 4, maxheight: &lines - 4, border: [], padding: [1,1,1,1], close: 'button', filter: 'popup_filter_menu'}) | call win_execute(popup_findinfo(), 'set syntax=go')
-"command! -nargs=1 Gdsh call popup_create(systemlist('go doc -src -u -all ' . <q-args>), #{title: 'Go Doc: ' . <q-args>, highlight: 'Normal', minwidth: 80, minheight: 20, maxwidth: &columns - 4, maxheight: &lines - 4, border: [0,0,0,0], padding: [0,0,0,0], close: 'button', filter: 'popup_filter_menu'}) | call win_execute(popup_findinfo(), 'set syntax=go')
-"command! -nargs=1 Gdsh let content = systemlist('go doc -src -u -all ' . <q-args>) | call append(search('^func', 'bnW') - 1, content) | call append(search('^func', 'bnW') - 1, '// ' . <q-args> . ' Documentation:') | call append(search('^func', 'bnW') - 1, '')
-"command! -nargs=1 Gdsh let content = systemlist('go doc -src -u -all ' . <q-args>) | let commented = map(content, '"// " . v:val') | call append(search('^func', 'bnW') - 1, commented) | call append(search('^func', 'bnW') - 1, '// ' . <q-args> . ' Documentation:') | call append(search('^func', 'bnW') - 1, '//') | call append(search('^func', 'bnW') - 1, '//')
-"command! -nargs=1 Gdsh let content = systemlist('go doc -src -u -all ' . <q-args>) | call append(line('.'), map(content, '"// " . v:val'))
-"command! -nargs=1 Gdsh let content = systemlist('go doc -src -u -all ' . <q-args>) | let insert_line = search('^$', 'bnW') | if insert_line == 0 | let insert_line = line('.') - 1 | endif | call append(insert_line, ['// ' . <q-args> . ' Documentation:', '//'] + map(content, '"// " . v:val') + ['//']) | call cursor(insert_line + 1, 1)
-"command! Gdsh let word = expand('<cword>') | let content = systemlist('go doc -src -u -all ' . word) | let insert_line = search('^import', 'bnW') | if insert_line == 0 | let insert_line = 1 | endif | call append(insert_line, ['', '// ' . word . ' Documentation:', '//'] + map(content, '"// " . v:val') + ['//']) | call cursor(insert_line + 2, 1)
-"command! Gdsh let fullword = expand('<cWORD>') | let parts = split(fullword, '\.') | let docarg = len(parts) > 1 ? join(parts[-2:], '.') : fullword | let content = systemlist('go doc -src -u -all ' . docarg) | let insert_line = search('^import', 'bnW') | if insert_line == 0 | let insert_line = 1 | endif | call append(insert_line, ['', '// ' . docarg . ' Documentation:', '//'] + map(content, '"// " . v:val') + ['//']) | call cursor(insert_line + 2, 1)
-"command! Gdsh let fullword = expand('<cWORD>') | let parts = split(matchstr(fullword, '\v\w+\.\w+'), '\.') | let docarg = join(parts, '.') | let content = systemlist('go doc -src -u -all ' . docarg) | let insert_line = search('^import', 'bnW') | if insert_line == 0 | let insert_line = 1 | endif | call append(insert_line, ['', '// ' . docarg . ' Documentation:', '//'] + map(content, '"// " . v:val') + ['//']) | call cursor(insert_line + 2, 1)
 command! Gdsh
     \ let fullword = expand('<cWORD>') |
     \ let parts = split(matchstr(fullword, '\v\w+\.\w+'), '\.') |
@@ -203,14 +195,94 @@ nnoremap <Leader>k :!go test<CR>
 " where in main.go you'll have a simple "hello, world" boilerplate code
 " It's easier for testing things and running small scripts than exiting
 " your current environment, jumping to another folder and so on...
+"
+"
+" [Quick Snippets]: cat main.go | tr '\n' '$' | sed 's/\$/\<CR>/g' 
+"
+
+
+let s:detail_winid = 0
+let s:main_winid = 0
+let s:current_pkg = ''
+let s:menu_items = []
+let s:current_index = 0
+
+function! ShowGoDocPopup(pkg)
+    let s:current_pkg = a:pkg
+    let output = system('go doc -short ' . a:pkg)
+    let s:menu_items = split(output, '\n')
+    let s:current_index = 0
+
+    let options = {
+        \ 'title': 'go doc -short ' . a:pkg,
+        \ 'padding': [1,1,1,1],
+        \ 'border': [1,1,1,1],
+        \ 'maxheight': 15,
+        \ 'minwidth': 60,
+        \ 'maxwidth': 80,
+        \ 'cursorline': 1,
+        \ 'wrap': 0,
+        \ 'callback': 'GoDocPopupCallback'
+    \ }
+
+    let s:main_winid = popup_menu(s:menu_items, options)
+
+    call win_execute(s:main_winid, 'setlocal nowrap')
+    call win_execute(s:main_winid, 'setlocal conceallevel=2')
+    call win_execute(s:main_winid, 'setlocal concealcursor=n')
+
+    call popup_setoptions(s:main_winid, {
+        \ 'filter': 'GoDocPopupFilter',
+        \ })
+endfunction
+
+function! GoDocPopupFilter(winid, key)
+    if a:key == 'j'
+        let s:current_index = (s:current_index + 1) % len(s:menu_items)
+        call popup_filter_menu(a:winid, a:key)
+        return 1
+    elseif a:key == 'k'
+        let s:current_index = (s:current_index - 1 + len(s:menu_items)) % len(s:menu_items)
+        call popup_filter_menu(a:winid, a:key)
+        return 1
+    elseif a:key == "\<CR>"
+        call ShowDetail()
+        return 1
+    elseif a:key == "\<Esc>"
+        if s:detail_winid
+            call popup_close(s:detail_winid)
+            let s:detail_winid = 0
+            return 1
+        else
+            call popup_close(a:winid)
+            return 0
+        endif
+    endif
+    return popup_filter_menu(a:winid, a:key)
+endfunction
+
+function! GoDocPopupCallback(id, result)
+    if a:result > 0
+        let s:current_index = a:result - 1
+        call ShowDetail()
+    endif
+endfunction
+
+function! ShowDetail()
+    if s:current_index >= 0 && s:current_index < len(s:menu_items)
+        let selection = s:menu_items[s:current_index]
+        echo "Current selection: " . selection
+    endif
+endfunction
+command! -nargs=1 GoDocFmtPopup call ShowGoDocPopup(<f-args>)
 
 augroup gocmds
     autocmd!
-    autocmd FileType go :iabbrev http_ func _N(w http.ResponseWriter, r *http.Request) {<CR>}<ESC>kw<S-*>
-    autocmd FileType go :iabbrev fori_ for i := 0; i < _N; i++ {<CR>}<ESC>kf_
-    autocmd FileType go :iabbrev forx_ for _N := range _N {<CR>}<ESC>kf_
+    autocmd FileType go :iabbrev http_ func _N(w http.ResponseWriter, r *http.Request) {<CR>w.Write([]byte("Hello, world!"))<CR>}<ESC>kkf_<S-*>
+    autocmd FileType go :iabbrev fori_ for _N := 0; _N < _N; i++ {<CR>}<ESC>kf_<S-*>
+    autocmd FileType go :iabbrev forx_ for _N := range _N {<CR>}<ESC>kf_<S-*>
     autocmd FileType go :iabbrev go_ go func(){<CR>}()<ESC>k
     autocmd FileType go :iabbrev ifer_ if err != nil {<CR>}<ESC>k
     autocmd FileType go :iabbrev iferf_ if err != nil {<CR>Fatalf()<CR>}<ESC>k
-    autocmd FileType go :iabbrev gomain_ package main<CR><CR>func main() {<CR>}<ESC>
+    autocmd FileType go :iabbrev gomain_ package main<CR><CR>import "fmt"<CR><CR>func main() {<CR>fmt.Println("Hello, World!")<CR>}<ESC>k
 augroup END
