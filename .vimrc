@@ -32,7 +32,7 @@ set ttyfast
 set history=10000
 set autoread
 set showcmd
-
+set timeoutlen=300
 set updatetime=150
 
 " stop 'exceed redraw limit' in vim
@@ -233,6 +233,7 @@ function! ShowGoDocPopup(pkg)
     call win_execute(s:main_winid, 'call cursor(1, 1)')
 endfunction
 
+let s:last_key = ''
 function! GoDocPopupFilter(winid, key)
     let total_items = len(s:menu_items)
     if a:key == 'j'
@@ -249,9 +250,19 @@ function! GoDocPopupFilter(winid, key)
         else
             call win_execute(a:winid, 'normal! k')
         endif
+    elseif char2nr(a:key) == 71
+        let s:current_index = total_items - 1
+        call win_execute(a:winid, 'normal! G')
+    elseif a:key == 'g'
+        if s:last_key == 'g'
+            let s:current_index = 0
+            let s:last_key = ''
+            call win_execute(a:winid, 'normal! gg')
+        else
+            let s:last_key = 'g'
+        endif
     elseif a:key == "\<CR>"
         call ShowDetail()
-        return 1
     elseif a:key == "\<Esc>"
         if s:detail_winid
             call popup_close(s:detail_winid)
@@ -316,7 +327,7 @@ function! ShowDetail()
                 \ 'minwidth': 60,
                 \ 'minheight': 10,
                 \ 'maxwidth': 80,
-                \ 'maxheight': 20,
+                \ 'maxheight': 15,
                 \ 'border': [1,1,1,1],
                 \ 'padding': [1,1,1,1],
                 \ 'wrap': 0,
