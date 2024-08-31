@@ -295,14 +295,6 @@ function! ExtractTypeName(str)
   return matchstr(trimmed_str, '^[^ {]\+')
 endfunction
 
-let test_cases = ["type Builder struct {...}", "type Reader struct {...}", "type Footer interface {...}"]
-
-for case in test_cases
-  echo "Original: " . case
-  echo "Processed: " . ExtractTypeName(case)
-  echo "---"
-endfor
-
 function! ShowDetail()
     if s:current_index >= 0 && s:current_index < len(s:menu_items)
         let selection = s:menu_items[s:current_index]
@@ -310,9 +302,7 @@ function! ShowDetail()
         " Process the selection using cut commands
         let processed_selection = system(printf('echo "%s" | cut -d " " -f2- | cut -d"(" -f1', selection))
 
-        let processed_selection = RemoveKeyword(processed_selection)
-
-        echo processed_selection
+        let processed_selection = ExtractTypeName(RemoveKeyword(processed_selection))
 
         let processed_selection = substitute(processed_selection, '\n$', '', '')  " Remove trailing newline
 
