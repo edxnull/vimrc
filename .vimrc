@@ -226,6 +226,7 @@ function! ShowGoDocPopup(pkg)
     \ }
 
     let s:main_winid = popup_create(s:menu_items, options)
+    set t_ve=
 
     call win_execute(s:main_winid, 'setlocal nowrap')
     call win_execute(s:main_winid, 'setlocal conceallevel=2')
@@ -270,6 +271,7 @@ function! GoDocPopupFilter(winid, key)
             return 1
         else
             call popup_close(a:winid)
+            set t_ve&
             return 0
         endif
     endif
@@ -322,7 +324,7 @@ function! ShowDetail()
                 \ 'zindex': 300,
                 \ 'minwidth': 60,
                 \ 'minheight': 10,
-                \ 'maxwidth': 80,
+                \ 'maxwidth': 100,
                 \ 'maxheight': 10,
                 \ 'padding': [1,1,1,1],
                 \ 'wrap': 0,
