@@ -307,8 +307,6 @@ function! ShowDetail()
 
         let processed_selection = ExtractTypeName(RemoveKeyword(processed_selection))
 
-        let processed_selection = substitute(processed_selection, '\n$', '', '')  " Remove trailing newline
-
         let cmd = printf('go doc -short %s.%s', s:current_pkg, processed_selection)
         let output = system(cmd)
         let detail_lines = split(output, '\n')
@@ -319,7 +317,6 @@ function! ShowDetail()
             call popup_settext(s:detail_winid, detail_lines)
         else
             let detail_options = {
-                \ 'title': 'Details: ' . processed_selection,
                 \ 'line': main_pos.line + main_pos.height + 1,
                 \ 'col': main_pos.col,
                 \ 'zindex': 300,
