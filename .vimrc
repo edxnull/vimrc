@@ -275,12 +275,45 @@ function! GoDocPopupCallback(id, result)
     endif
 endfunction
 
+function! RemoveKeyword(str)
+  " First, remove leading spaces
+  let trimmed_str = substitute(a:str, '^\s\+', '', '')
+
+  let pattern = '\v^(func|type|const|var)\s+'
+  if match(trimmed_str, pattern) != -1
+    return substitute(trimmed_str, pattern, '', '')
+  else
+    return trimmed_str
+  endif
+endfunction
+
+function! ExtractTypeName(str)
+  " Remove leading spaces and 'type' keyword
+  let trimmed_str = substitute(a:str, '^\s*type\s\+', '', '')
+
+  " Extract the type name (everything up to the first space or '{')
+  return matchstr(trimmed_str, '^[^ {]\+')
+endfunction
+
+let test_cases = ["type Builder struct {...}", "type Reader struct {...}", "type Footer interface {...}"]
+
+for case in test_cases
+  echo "Original: " . case
+  echo "Processed: " . ExtractTypeName(case)
+  echo "---"
+endfor
+
 function! ShowDetail()
     if s:current_index >= 0 && s:current_index < len(s:menu_items)
         let selection = s:menu_items[s:current_index]
 
         " Process the selection using cut commands
         let processed_selection = system(printf('echo "%s" | cut -d " " -f2- | cut -d"(" -f1', selection))
+
+        let processed_selection = RemoveKeyword(processed_selection)
+
+        echo processed_selection
+
         let processed_selection = substitute(processed_selection, '\n$', '', '')  " Remove trailing newline
 
         " Now use the processed selection in the go doc command
