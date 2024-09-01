@@ -38,10 +38,9 @@ set updatetime=150
 set listchars=space:·,tab:▸\ ,eol:$
 set clipboard=unnamed
 
-set laststatus=2
-
-set statusline=
-set statusline+=%<%f\ (%{&ft})\ %-4(%m%)%=%-19(%3l,%02c%03V%)
+"set laststatus=2
+"set statusline=
+"set statusline+=%<%f\ (%{&ft})\ %-4(%m%)%=%-19(%3l,%02c%03V%)
 
 " stop 'exceed redraw limit' in vim
 set re=0
