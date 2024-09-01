@@ -4,6 +4,7 @@ set nocompatible
 set background=light
 syntax on
 filetype plugin indent on
+filetype plugin on
 
 let loaded_matchparen = 1
 
@@ -206,6 +207,8 @@ let s:current_pkg = ''
 let s:menu_items = []
 let s:current_index = 0
 
+let s:last_key = ''
+
 function! ShowGoDocPopup(pkg)
     let s:current_pkg = a:pkg
     let output = system('go doc -short ' . a:pkg)
@@ -234,7 +237,6 @@ function! ShowGoDocPopup(pkg)
     call win_execute(s:main_winid, 'call cursor(1, 1)')
 endfunction
 
-let s:last_key = ''
 function! GoDocPopupFilter(winid, key)
     let total_items = len(s:menu_items)
     if a:key == 'j'
