@@ -329,7 +329,7 @@ function! ShowDetail()
             let detail_options = {
                 \ 'line': main_pos.line + main_pos.height + 1,
                 \ 'col': main_pos.col,
-                \ 'zindex': 300,
+                \ 'zindex': 600,
                 \ 'minwidth': 100,
                 \ 'maxwidth': 100,
                 \ 'minheight': 10,
