@@ -267,6 +267,11 @@ function! GoDocPopupFilter(winid, key)
         let s:current_index = 0
         call win_execute(a:winid, 'normal! gg')
     elseif a:key == "\<CR>"
+        if s:detail_winid
+            call popup_close(s:detail_winid)
+            let s:detail_winid = 0
+            return 1
+        endif
         call ShowDetail()
     elseif a:key == "\<Esc>"
         if s:detail_winid
@@ -326,6 +331,7 @@ function! ShowDetail()
                 \ 'line': main_pos.line + main_pos.height + 1,
                 \ 'col': main_pos.col,
                 \ 'zindex': 600,
+                \ 'close': 'button',
                 \ 'minwidth': 100,
                 \ 'maxwidth': 100,
                 \ 'minheight': 10,
