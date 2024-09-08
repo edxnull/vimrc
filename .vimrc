@@ -59,6 +59,9 @@ call plug#end()
 colorscheme xcodelighthc
 hi Search ctermbg=LightGreen
 
+set fillchars+=vert:\|
+highlight VertSplit ctermbg=NONE ctermfg=gray
+
 "NOTE: This is an example func that does redirection to stdout
 func! s:DumpToStdout()
     redi! > /dev/stdout
