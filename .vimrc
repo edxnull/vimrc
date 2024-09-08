@@ -216,8 +216,6 @@ let s:current_pkg = ''
 let s:menu_items = []
 let s:current_index = 0
 
-let s:last_key = ''
-
 function! ShowGoDocPopup(pkg)
     let s:current_pkg = a:pkg
     let output = system('go doc -short ' . a:pkg)
@@ -265,14 +263,9 @@ function! GoDocPopupFilter(winid, key)
     elseif char2nr(a:key) == 71 "capital G
         let s:current_index = total_items - 1
         call win_execute(a:winid, 'normal! G')
-    elseif a:key == 'g'
-        if s:last_key == 'g'
-            let s:current_index = 0
-            let s:last_key = ''
-            call win_execute(a:winid, 'normal! gg')
-        else
-            let s:last_key = 'g'
-        endif
+    elseif a:key == 'H'
+        let s:current_index = 0
+        call win_execute(a:winid, 'normal! gg')
     elseif a:key == "\<CR>"
         call ShowDetail()
     elseif a:key == "\<Esc>"
