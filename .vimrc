@@ -54,10 +54,16 @@ call plug#begin()
 Plug 'arzg/vim-colors-xcode'
 Plug 'mattn/emmet-vim'
 Plug 'mattn/vim-goimports'
-Plug 'ctrlpvim/ctrlp.vim'
+Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
+Plug 'junegunn/fzf.vim'
 call plug#end()
 colorscheme xcodelighthc
 hi Search ctermbg=LightGreen
+
+let g:fzf_vim = {}
+let g:fzf_vim.preview_window = []
+let g:fzf_layout = { 'window': 'enew' }
+let g:fzf_layout = { 'down': '~30%' }
 
 set fillchars+=vert:\|
 highlight VertSplit ctermbg=NONE ctermfg=gray
