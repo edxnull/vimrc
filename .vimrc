@@ -62,8 +62,9 @@ hi Search ctermbg=LightGreen
 
 let g:fzf_vim = {}
 let g:fzf_vim.preview_window = []
-let g:fzf_layout = { 'window': 'enew' }
 let g:fzf_layout = { 'down': '~30%' }
+
+nnoremap <C-p> :Files<CR>
 
 set fillchars+=vert:\|
 highlight VertSplit ctermbg=NONE ctermfg=gray
