@@ -38,6 +38,11 @@ set updatetime=150
 set listchars=space:·,tab:▸\ ,eol:$
 set clipboard=unnamed
 
+let g:netrw_liststyle = 3
+let g:netrw_winsize = 15
+let g:netrw_altv = 1
+let g:netrw_banner = 0
+
 "set laststatus=2
 "set statusline=
 "set statusline+=%<%f\ (%{&ft})\ %-4(%m%)%=%-19(%3l,%02c%03V%)
@@ -52,10 +57,11 @@ set ruler
 
 call plug#begin()
 Plug 'arzg/vim-colors-xcode'
-Plug 'mattn/emmet-vim'
-Plug 'mattn/vim-goimports'
-Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
-Plug 'junegunn/fzf.vim'
+"Plug 'mattn/emmet-vim'
+"Plug 'mattn/vim-goimports'
+"Plug 'vim-scripts/vim-gitgutter'
+"Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
+"Plug 'junegunn/fzf.vim'
 call plug#end()
 colorscheme xcodelighthc
 hi Search ctermbg=LightGreen
