@@ -1,5 +1,5 @@
 set nocompatible
-"set termguicolors
+set termguicolors
 
 set background=light
 syntax on
@@ -58,13 +58,14 @@ set ruler
 call plug#begin()
 Plug 'arzg/vim-colors-xcode'
 "Plug 'mattn/emmet-vim'
-"Plug 'mattn/vim-goimports'
+Plug 'mattn/vim-goimports'
 "Plug 'vim-scripts/vim-gitgutter'
 "Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
 "Plug 'junegunn/fzf.vim'
 call plug#end()
 colorscheme xcodelighthc
 hi Search ctermbg=LightGreen
+:highlight String ctermfg=Cyan guifg=#008888
 
 let g:fzf_vim = {}
 let g:fzf_vim.preview_window = []
